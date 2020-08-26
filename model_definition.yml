@@ -1,0 +1,20 @@
+kind: Model
+apiVersion: v1alpha3
+metadata:
+  displayName: Urban Development Model (v01)
+  name: open-udm-v01
+  summary: Model the potential areas of urban development given a set of contraints and attractors.
+  description: The model uses optimisation of a set of attractors to urban developemnt and constraints for urban development to predict the given projected demand and development parameters where urban development will take place.
+  type: example optimisation model
+spec:
+  outputs:
+    datasets:
+      - name: /data/outputs/out_cell_dev
+        type: .asc
+        desc: Raster file of development areas
+      - name: /data/outputs/out_cell_overflow
+        type: .csv
+        desc: CSV report of cell allocation of population
+      - name: /data/outputs/out_cell_metadata
+        type: .csv
+        desc: CSV report of model running and output
