@@ -14,7 +14,7 @@ import sys
 from openudm import (
     CellularModel, DevZones as dz, MultiCriteriaEval as mce, RasterToolkit as rt)
 
-def main(swap_path):
+def main(swap_path, swap_path_output):
 
     ### GENERIC INTERFACE BEGIN----------------------------------------------------------------------------------------
 
@@ -43,8 +43,8 @@ def main(swap_path):
 
     # OUTDATA BEGIN--------------------------------------------------------------------------------
 
-    cell_dev_asc_str = os.path.join(swap_path, 'out_cell_dev.asc')
-    overflow_str = os.path.join(swap_path, 'out_cell_overflow.csv')
+    cell_dev_asc_str = os.path.join(swap_path_output, 'out_cell_dev.asc')
+    overflow_str = os.path.join(swap_path_output, 'out_cell_overflow.csv')
 
     output_raster = cell_dev_asc_str
     overflow_data = overflow_str
@@ -352,7 +352,7 @@ def main(swap_path):
     md = zip(*md)
 
     #set metadata csv output string
-    md_str = os.path.join(swap_path, 'out_cell_metadata.csv')
+    md_str = os.path.join(swap_path_output, 'out_cell_metadata.csv')
 
     #write metadata to csv
     print("writing", md_str)
@@ -364,12 +364,13 @@ def main(swap_path):
     print("Model run complete")
 
 if __name__ == "__main__":
-    data_path = 'Data'
+    input_data_path = 'Data'
+    output_data_path = '/data/outputs'
 
     try:
         data_path = sys.argv[1]
-        print(f"Using provided data path: {data_path}")
+        print(f"Using provided data path: {input_data_path}")
     except IndexError:
-        print(f"Using default data path: {data_path}")
+        print(f"Using default data path: {input_data_path}")
 
-    main(data_path)
+    main(input_data_path, output_data_path)
