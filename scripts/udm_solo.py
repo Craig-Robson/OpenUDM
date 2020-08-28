@@ -14,7 +14,7 @@ import sys
 from openudm import (
     CellularModel, DevZones as dz, MultiCriteriaEval as mce, RasterToolkit as rt)
 
-def main(swap_path, swap_path_output):
+def main(swap_path, swap_path_output, dafni_input_initialpop, dafni_input_totalpop, debug=False):
 
     ### GENERIC INTERFACE BEGIN----------------------------------------------------------------------------------------
 
@@ -38,6 +38,14 @@ def main(swap_path, swap_path_output):
     zonal_pop_output = pop_str
     driver_name = 'no_driver'
     density = density_str
+
+    # get DAFNI parameter and update csv with it ------------------------
+    # this is just as an example to show how parameters can be passed. normally more zones would be used and therefore this information would passed within a file
+
+    f = open(pop_str, 'w')
+    f.write('pop_initial, pop_final\n')
+    f.write('%s,%s' %(dafni_input_initialpop, dafni_input_totalpop))
+    f.close()
 
     # INDATA END-----------------------------------------------------------------------------------
 
@@ -66,7 +74,7 @@ def main(swap_path, swap_path_output):
             num_cols = int(row['num_cols'])
             num_rows = int(row['num_rows'])
 
-    print( "Parameters file imported.")
+    if debug: print( "Parameters file imported.")
 
     #params for table reading - hardcoded to simplify
     label_total = 2
@@ -152,7 +160,7 @@ def main(swap_path, swap_path_output):
 
 
     mce.MaskedWeightedSum((bval>0),mce_i_raster_count_str,mce_i_raster_str,mce_d_raster_count_str,mce_d_raster_str,mce_output_raster_str,full_rast_hdr,swap_path + "/",(rval>0))
-    print("mce.MaskedWeightedSum")
+    if debug: print("mce.MaskedWeightedSum")
     ###ZONE IDS-------------------------------------------------------------------------------------------
 
     #setup stack to hold raster filenames
@@ -180,58 +188,58 @@ def main(swap_path, swap_path_output):
     # CALL SWIG-WRAPPED C++ FUNCTION------------------------------------------------------------------------
 
     dz.CreateDevZones((bval>0), min_dev_area, (mval>0), mask_str, zone_id_str, full_rast_hdr, swap_path, ward_id_str)
-    print("dz.CreateDevZones")
+    if debug: print("dz.CreateDevZones")
     ###ZONE AVG---------------------------------------------------------------------------------------------
 
     # CALL SWIG-WRAPPED C++ FUNCTION------------------------------------------------------------------------
 
     dz.DevZoneAVGSuit((bval>0), zone_id_str, mce_output_raster_str, zone_avg_str, full_rast_hdr, swap_path)
-    print("dz.DevZoneAVGSuit")
+    if debug: print("dz.DevZoneAVGSuit")
 
     ###CELLULAR MODEL---------------------------------------------------------------------------------------
 
     # CALL SWIG-WRAPPED C++ FUNCTION-------------------------------------------------------------------------
 
-    print("CellularModel.CellularModel")
+    if debug: print("CellularModel.CellularModel")
     cm = CellularModel.CellularModel()
-    print("cm.Setup", num_zones, cell_size, num_cols, num_rows)
+    if debug: print("cm.Setup", num_zones, cell_size, num_cols, num_rows)
     cm.Setup(num_zones, cell_size, num_cols, num_rows)
-    print("cm.UseBinaryRasters", bval)
+    if debug: print("cm.UseBinaryRasters", bval)
     cm.UseBinaryRasters((bval>0))
-    print("cm.SetRasterHeader", full_rast_hdr)
+    if debug: print("cm.SetRasterHeader", full_rast_hdr)
     cm.SetRasterHeader(full_rast_hdr)
-    print("cm.SetPathToBinaryConfigFiles", swap_path)
+    if debug: print("cm.SetPathToBinaryConfigFiles", swap_path)
     cm.SetPathToBinaryConfigFiles(swap_path)
 
-    print("cm.LoadWardLabels", wards_str, label_col, label_total)
+    if debug: print("cm.LoadWardLabels", wards_str, label_col, label_total)
     cm.LoadWardLabels(wards_str, label_col, label_total)
-    print("cm.LoadCurrentPopulation", pop_str, cur_pop_col, pop_total)
+    if debug: print("cm.LoadCurrentPopulation", pop_str, cur_pop_col, pop_total)
     cm.LoadCurrentPopulation(pop_str, cur_pop_col, pop_total)
-    print("cm.LoadFuturePopulation", pop_str, fut_pop_col, pop_total)
+    if debug: print("cm.LoadFuturePopulation", pop_str, fut_pop_col, pop_total)
     cm.LoadFuturePopulation(pop_str, fut_pop_col, pop_total)
 
-    print("if", density_provided)
+    if debug: print("if", density_provided)
     if density_provided:
-        print("cm.LoadWardDensity", density_str,0,1)
+        if debug: print("cm.LoadWardDensity", density_str,0,1)
         cm.LoadWardDensity(density_str,0,1)
 
-    print("cm.LoadWardIDRaster", ward_id_str)
+    if debug: print("cm.LoadWardIDRaster", ward_id_str)
     cm.LoadWardIDRaster(ward_id_str)
-    print("cm.LoadZoneIDRaster", zone_id_str)
+    if debug: print("cm.LoadZoneIDRaster", zone_id_str)
     cm.LoadZoneIDRaster(zone_id_str)
-    print("cm.LoadZoneAVGRaster", zone_avg_str)
+    if debug: print("cm.LoadZoneAVGRaster", zone_avg_str)
     cm.LoadZoneAVGRaster(zone_avg_str)
-    print("cm.LoadDevLandRaster", cur_dev_str)
+    if debug: print("cm.LoadDevLandRaster", cur_dev_str)
     cm.LoadDevLandRaster(cur_dev_str)
-    print("cm.LoadCellSuitRaster", mce_output_raster_str)
+    if debug: print("cm.LoadCellSuitRaster", mce_output_raster_str)
     cm.LoadCellSuitRaster(mce_output_raster_str)
 
-    print("cm.RunModel")
+    if debug: print("cm.RunModel")
     cm.RunModel()
-    print("cm.OutputRasterResult", cell_dev_output_str)
+    if debug: print("cm.OutputRasterResult", cell_dev_output_str)
     cm.OutputRasterResult(cell_dev_output_str)
 
-    print("cm.WriteOverflowWards", overflow_str)
+    if debug: print("cm.WriteOverflowWards", overflow_str)
     cm.WriteOverflowWards(overflow_str)
 
     # WRITE RESULTS TO RASTER-----------------------------------------------------------------------------------
@@ -361,16 +369,21 @@ def main(swap_path, swap_path_output):
         writer.writerows(md)
 
     ### END OF METADATA
-    print("Model run complete")
+    if debug: print("Model run complete")
 
 if __name__ == "__main__":
     input_data_path = 'Data'
     output_data_path = '/data/outputs'
 
+    debug = False
+
+    env_totalpop = os.getenv("TOTAL_ZONE_POPULATION")
+    env_initialpop = os.getenv("INITIAL_ZONE_POPULATION")
+
     try:
         data_path = sys.argv[1]
-        print(f"Using provided data path: {input_data_path}")
+        if debug: print(f"Using provided data path: {input_data_path}")
     except IndexError:
-        print(f"Using default data path: {input_data_path}")
+        if debug: print(f"Using default data path: {input_data_path}")
 
-    main(input_data_path, output_data_path)
+    main(input_data_path, output_data_path, env_initialpop, env_totalpop, debug)

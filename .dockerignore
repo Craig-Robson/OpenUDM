@@ -1,5 +1,6 @@
 .idea
 .git
+.tar.gz
 
 dist
 build
