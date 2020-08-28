@@ -1,8 +1,8 @@
 kind: Model
 apiVersion: v1alpha3
 metadata:
-  displayName: Urban Development Model (v03)
-  name: open-udm-v03
+  displayName: Urban Development Model (v04)
+  name: open-udm-v04
   summary: Model the potential areas of urban development given a set of contraints and attractors.
   description: >
     The model uses optimisation of a set of attractors to urban development and constraints for urban development to predict the given projected demand and development parameters where urban development will take place.
@@ -10,9 +10,17 @@ metadata:
 spec:
   inputs:
     env:
+      - name: INITIAL_ZONE_POPULATION
+        title: Initial zone population
+        desc: The initial population of the zone being analysed in this simple test version.
+        type: integer
+        default: 9
+        min: 0
+        max: 200
+
       - name: TOTAL_ZONE_POPULATION
         title: Final zone population
-        desc: The final population of the zone being analysed in this simple test version.
+        desc: The final population of the zone being analysed in this simple test version. This should ne higher than the initial zone population value.
         type: integer
         default: 13
         min: 0

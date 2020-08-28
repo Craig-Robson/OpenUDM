@@ -14,7 +14,7 @@ import sys
 from openudm import (
     CellularModel, DevZones as dz, MultiCriteriaEval as mce, RasterToolkit as rt)
 
-def main(swap_path, swap_path_output, dafni_input_totalpop, debug=False):
+def main(swap_path, swap_path_output, dafni_input_initialpop, dafni_input_totalpop, debug=False):
 
     ### GENERIC INTERFACE BEGIN----------------------------------------------------------------------------------------
 
@@ -41,7 +41,6 @@ def main(swap_path, swap_path_output, dafni_input_totalpop, debug=False):
 
     # get DAFNI parameter and update csv with it ------------------------
     # this is just as an example to show how parameters can be passed. normally more zones would be used and therefore this information would passed within a file
-    dafni_input_initialpop = '9'
 
     f = open(pop_str, 'w')
     f.write('pop_initial, pop_final\n')
@@ -379,6 +378,7 @@ if __name__ == "__main__":
     debug = False
 
     env_totalpop = os.getenv("TOTAL_ZONE_POPULATION")
+    env_initialpop = os.getenv("INITIAL_ZONE_POPULATION")
 
     try:
         data_path = sys.argv[1]
@@ -386,4 +386,4 @@ if __name__ == "__main__":
     except IndexError:
         if debug: print(f"Using default data path: {input_data_path}")
 
-    main(input_data_path, output_data_path, env_totalpop, debug)
+    main(input_data_path, output_data_path, env_initialpop, env_totalpop, debug)
