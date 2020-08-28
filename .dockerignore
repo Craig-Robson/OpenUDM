@@ -5,3 +5,5 @@ dist
 build
 SWIG
 openudm.egg-info
+Dockerfile
+model_definition.yml
