@@ -14,7 +14,7 @@ import sys
 from openudm import (
     CellularModel, DevZones as dz, MultiCriteriaEval as mce, RasterToolkit as rt)
 
-def main(swap_path, swap_path_output, debug=False):
+def main(swap_path, swap_path_output, dafni_input_totalpop, debug=False):
 
     ### GENERIC INTERFACE BEGIN----------------------------------------------------------------------------------------
 
@@ -29,7 +29,6 @@ def main(swap_path, swap_path_output, debug=False):
     cell_i_raster_str = os.path.join(swap_path, 'in_udm_ras.csv')
     wards_str = os.path.join(swap_path, 'in_zone_order.csv')
     pop_str = os.path.join(swap_path, 'in_zonal_pop.csv')
-    print(pop_str)
     density_str = os.path.join(swap_path, 'in_zonal_density.csv')
 
     mce_i_rasters = mce_i_raster_str
@@ -40,7 +39,14 @@ def main(swap_path, swap_path_output, debug=False):
     driver_name = 'no_driver'
     density = density_str
 
-    # ------------------------
+    # get DAFNI parameter and update csv with it ------------------------
+    # this is just as an example to show how parameters can be passed. normally more zones would be used and therefore this information would passed within a file
+    dafni_input_initialpop = '9'
+
+    f = open(pop_str, 'w')
+    f.write('pop_initial, pop_final\n')
+    f.write('%s,%s' %(dafni_input_initialpop, dafni_input_totalpop))
+    f.close()
 
     # INDATA END-----------------------------------------------------------------------------------
 
@@ -372,10 +378,12 @@ if __name__ == "__main__":
 
     debug = False
 
+    env_totalpop = os.getenv("TOTAL_ZONE_POPULATION")
+
     try:
         data_path = sys.argv[1]
         if debug: print(f"Using provided data path: {input_data_path}")
     except IndexError:
         if debug: print(f"Using default data path: {input_data_path}")
 
-    main(input_data_path, output_data_path, debug)
+    main(input_data_path, output_data_path, env_totalpop, debug)
