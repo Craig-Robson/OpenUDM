@@ -14,7 +14,7 @@ import sys
 from openudm import (
     CellularModel, DevZones as dz, MultiCriteriaEval as mce, RasterToolkit as rt)
 
-def main(swap_path, swap_path_output, dafni_input_initialpop, dafni_input_totalpop, debug=False):
+def main(swap_path, swap_path_output, dafni_input_mindevarea, debug=False):
 
     ### GENERIC INTERFACE BEGIN----------------------------------------------------------------------------------------
 
@@ -39,14 +39,6 @@ def main(swap_path, swap_path_output, dafni_input_initialpop, dafni_input_totalp
     driver_name = 'no_driver'
     density = density_str
 
-    # get DAFNI parameter and update csv with it ------------------------
-    # this is just as an example to show how parameters can be passed. normally more zones would be used and therefore this information would passed within a file
-
-    f = open(pop_str, 'w')
-    f.write('pop_initial, pop_final\n')
-    f.write('%s,%s' %(dafni_input_initialpop, dafni_input_totalpop))
-    f.close()
-
     # INDATA END-----------------------------------------------------------------------------------
 
     # OUTDATA BEGIN--------------------------------------------------------------------------------
@@ -63,13 +55,21 @@ def main(swap_path, swap_path_output, dafni_input_initialpop, dafni_input_totalp
 
     params_str = os.path.join(swap_path, 'in_params.csv')
 
+    # get DAFNI parameter and update csv with it ------------------------
+    # this is just as an example to show how parameters can be passed. normally more zones would be used and therefore this information would passed within a file
+
+    #f = open(pop_str, 'w')
+    #f.write('pop_initial\n')
+    #f.write('%s' % (dafni_input_mindevarea))
+    #f.close()
+
     #import parameters
     with open(params_str) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             num_zones = int(row['num_zones'])
             density_provided = int(row['density_provided'])
-            min_dev_area = int(row['min_dev_area'])
+            min_dev_area = int(dafni_input_mindevarea)
             cell_size = int(row['cell_size'])
             num_cols = int(row['num_cols'])
             num_rows = int(row['num_rows'])
@@ -377,8 +377,7 @@ if __name__ == "__main__":
 
     debug = False
 
-    env_totalpop = os.getenv("TOTAL_ZONE_POPULATION")
-    env_initialpop = os.getenv("INITIAL_ZONE_POPULATION")
+    env_mindevarea = os.getenv("MINIMUM_DEVELOPMENT_AREA")
 
     try:
         data_path = sys.argv[1]
@@ -386,4 +385,4 @@ if __name__ == "__main__":
     except IndexError:
         if debug: print(f"Using default data path: {input_data_path}")
 
-    main(input_data_path, output_data_path, env_initialpop, env_totalpop, debug)
+    main(input_data_path, output_data_path, env_mindevarea, debug)

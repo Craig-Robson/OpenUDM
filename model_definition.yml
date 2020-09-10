@@ -10,18 +10,10 @@ metadata:
 spec:
   inputs:
     env:
-      - name: INITIAL_ZONE_POPULATION
-        title: Initial zone population
-        desc: The initial population of the zone being analysed in this simple test version.
+      - name: MINIMUM_DEVELOPMENT_AREA
+        title: Minum development area size
+        desc: The minimum size of area for development
         type: integer
-        default: 9
-        min: 0
-        max: 200
-
-      - name: TOTAL_ZONE_POPULATION
-        title: Final zone population
-        desc: The final population of the zone being analysed in this simple test version. This should ne higher than the initial zone population value.
-        type: integer
-        default: 13
-        min: 0
-        max: 200
+        default: 100
+        min: 1
+        max: 1000
