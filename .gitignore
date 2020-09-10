@@ -1,3 +1,6 @@
+# ignore data directory
+/Data
+
 ## Ignore Visual Studio temporary files, build results
 
 # User-specific files
